@@ -15,5 +15,5 @@ feeds:
     url: https://huggingface.co/blog/feed.xml
 
 max_articles_per_feed: 5
-lookback_hours: 24
+lookback_hours: 48
 language: czech
