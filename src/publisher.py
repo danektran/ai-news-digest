@@ -37,7 +37,9 @@ def _digest_to_html_body(digest: str) -> str:
         if not line:
             continue
         line = html.escape(line)
-        if line.startswith("## "):
+        if line.startswith("# ") and not line.startswith("## "):
+            html_lines.append(f"<h1>{line[2:]}</h1>")
+        elif line.startswith("## "):
             html_lines.append(f"<h2>{line[3:]}</h2>")
         elif line.startswith("**") and "**" in line[2:]:
             # Bold lead: **Title** — rest of text. [Odkaz](url)
