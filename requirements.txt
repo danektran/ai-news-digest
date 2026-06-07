@@ -3,3 +3,4 @@ feedparser
 requests
 pyyaml
 python-dateutil
+pytest
