@@ -1,16 +1,18 @@
-"""Entry point — orchestrates fetching, summarising, and notifying."""
+"""Entry point — orchestrates fetching, summarising, publishing, and notifying."""
 
 from __future__ import annotations
 
 import logging
 import sys
+from datetime import date
 from pathlib import Path
 
 import yaml
 
 from fetcher import fetch_all_articles
 from summarizer import summarise
-from notifier import send_digest
+from publisher import publish
+from notifier import send_notification
 
 logging.basicConfig(
     level=logging.INFO,
@@ -37,14 +39,13 @@ def main() -> None:
         sys.exit(1)
 
     feeds = config.get("feeds", [])
-    lookback_hours = int(config.get("lookback_hours", 24))
+    lookback_hours = int(config.get("lookback_hours", 168))
     max_per_feed = int(config.get("max_articles_per_feed", 5))
 
     if not feeds:
         logger.error("No feeds configured in config.yaml")
         sys.exit(1)
 
-    # Step 1 — fetch
     logger.info("Fetching articles from %d feed(s)…", len(feeds))
     try:
         articles = fetch_all_articles(feeds, lookback_hours, max_per_feed)
@@ -54,7 +55,6 @@ def main() -> None:
 
     logger.info("Fetched %d article(s) in total.", len(articles))
 
-    # Step 2 — summarise
     logger.info("Summarising articles…")
     try:
         digest = summarise(articles)
@@ -62,12 +62,18 @@ def main() -> None:
         logger.error("Failed to generate digest: %s", exc)
         sys.exit(1)
 
-    # Step 3 — notify
-    logger.info("Sending digest to Discord…")
+    logger.info("Publishing to GitHub Pages…")
     try:
-        send_digest(digest)
+        url = publish(digest, date.today())
     except Exception as exc:
-        logger.error("Failed to send digest: %s", exc)
+        logger.error("Failed to publish digest: %s", exc)
+        sys.exit(1)
+
+    logger.info("Sending Discord notification…")
+    try:
+        send_notification(url)
+    except Exception as exc:
+        logger.error("Failed to send notification: %s", exc)
         sys.exit(1)
 
     logger.info("=== AI News Digest completed successfully ===")
