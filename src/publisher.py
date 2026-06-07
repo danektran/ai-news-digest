@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import html
 import re
 from datetime import date
 from pathlib import Path
@@ -17,7 +18,6 @@ _CSS = """
   .masthead-date { font-size: 12px; color: #78716c; }
   .layout { display: flex; gap: 32px; }
   .main-col { flex: 2; }
-  .side-col { flex: 1; border-left: 1px solid #e7e5e4; padding-left: 24px; }
   h2 { font-size: 13px; letter-spacing: 2px; text-transform: uppercase; color: #78716c; border-bottom: 1px solid #e7e5e4; padding-bottom: 4px; margin: 20px 0 10px; }
   p { font-size: 15px; line-height: 1.7; margin: 0 0 12px; }
   a { color: #1c1917; }
@@ -25,7 +25,6 @@ _CSS = """
   .archive h2 { margin-top: 0; }
   .archive ul { list-style: none; padding: 0; margin: 0; }
   .archive li { font-size: 13px; padding: 4px 0; border-bottom: 1px solid #e7e5e4; }
-  @media (max-width: 600px) { .layout { flex-direction: column; } .side-col { border-left: none; padding-left: 0; border-top: 1px solid #e7e5e4; padding-top: 16px; } }
 """
 
 
@@ -37,6 +36,7 @@ def _digest_to_html_body(digest: str) -> str:
         line = line.strip()
         if not line:
             continue
+        line = html.escape(line)
         if line.startswith("## "):
             html_lines.append(f"<h2>{line[3:]}</h2>")
         elif line.startswith("**") and "**" in line[2:]:

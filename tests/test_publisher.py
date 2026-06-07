@@ -1,8 +1,5 @@
-import os
-import re
 from pathlib import Path
 from datetime import date
-import pytest
 import sys
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 from publisher import publish
