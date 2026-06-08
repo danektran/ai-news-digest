@@ -2,7 +2,8 @@ name: Weekly AI Digest
 
 on:
   schedule:
-    - cron: '0 6 * * 1'   # every Monday at 06:00 UTC (08:00 CEST / 07:00 CET)
+    - cron: '0 8 * 3-10 1'    # Monday 10:00 CEST (UTC+2, summer: Mar-Oct)
+    - cron: '0 9 * 1-2,11-12 1' # Monday 10:00 CET  (UTC+1, winter: Nov-Feb)
   workflow_dispatch:        # allow manual runs from the GitHub UI
 
 permissions:
