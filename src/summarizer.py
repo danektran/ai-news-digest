@@ -11,7 +11,7 @@ import anthropic
 logger = logging.getLogger(__name__)
 
 MODEL = "claude-haiku-4-5-20251001"
-MAX_WORDS = 1000
+MAX_WORDS = 3000
 
 _SYSTEM_PROMPT = """\
 Jsi redaktor specializovaný na umělou inteligenci. Píšeš v češtině.
@@ -20,7 +20,8 @@ Dostaneš seznam článků z AI oblasti a tvým úkolem je sestavit přehledný 
 Pravidla:
 - Piš výhradně česky.
 - Seskup zprávy do tematických kategorií: Modely a výzkum / Produkty a launches / Průmyslové zprávy / Ostatní.
-- Každý článek shrň 2–3 větami a přidej odkaz ve formátu [název článku](url).
+- Každý článek shrň 2–3 větami. Piš srozumitelně a jednoduše — čtenář musí pochopit podstatu bez kliknutí na odkaz.
+- Na konci každého článku přidej odkaz ve formátu [název článku](url).
 - Celkový rozsah nepřesáhne {max_words} slov.
 - Na závěr napiš jednu větu s celkovým počtem článků.
 - Pokud nejsou žádné články, napiš pouze: "Dnes žádné novinky z oblasti AI."
@@ -79,7 +80,7 @@ def summarise(articles: list[dict]) -> str:
     try:
         message = client.messages.create(
             model=MODEL,
-            max_tokens=2048,
+            max_tokens=4096,
             system=system,
             messages=[{"role": "user", "content": user}],
         )
