@@ -45,9 +45,11 @@ def _digest_to_html_body(digest: str) -> str:
             # Bold lead: **Title** — rest of text. [Odkaz](url)
             line = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", line)
             line = re.sub(r"\[(.+?)\]\((.+?)\)", r'<a href="\2">\1</a>', line)
+            line = re.sub(r'(?<!["\'])https?://[^\s<>"]+', lambda m: f'<a href="{m.group()}">{m.group()}</a>', line)
             html_lines.append(f"<p>{line}</p>")
         else:
             line = re.sub(r"\[(.+?)\]\((.+?)\)", r'<a href="\2">\1</a>', line)
+            line = re.sub(r'(?<!["\'])https?://[^\s<>"]+', lambda m: f'<a href="{m.group()}">{m.group()}</a>', line)
             html_lines.append(f"<p>{line}</p>")
     return "\n".join(html_lines)
 
